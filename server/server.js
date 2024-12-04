@@ -23,6 +23,9 @@ app.use(express.json()); // to get json data in all over the application
 app.get("/", (req, res) => {
   res.status(200).send("Server is ready to use");
 });
+app.get("/about", (req, res) => {
+  res.status(200).send("About section in backend");
+});
 app.use("/api/auth", authRouter);
 app.use("/api/contact", contactRouter);
 app.use("/api/admin", adminRoute);
@@ -33,5 +36,5 @@ app.use(errorMiddleware);
 const port = process.env.PORT || 5000;
 connectDB();
 app.listen(port, () => {
-  console.log(`Backend is Running`);
+  console.log(`Backend is Running at port ${port}`);
 });
