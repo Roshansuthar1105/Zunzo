@@ -1,3 +1,14 @@
+# netlify.toml
+[build]
+  base = "client"
+  publish = "client"
+  command = "npm install && npm run build"
+
+[functions]
+  directory = "client/netlify/functions"
+
+[dev]
+  functions = "client/netlify/functions"
 [[redirects]]
   from = "/*"
   to = "/index.html"
