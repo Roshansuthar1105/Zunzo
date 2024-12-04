@@ -31,6 +31,6 @@ app.use("/api/products",productRoute);
 app.use(errorMiddleware);
 
 const port = process.env.PORT || 5000;
-app.listen(port,()=>{
-    console.log(`Backend is Running at http://localhost:${port}`)
-})
+connectDB().then(()=>app.listen(port,()=>{
+    console.log(`Backend is Running`)
+}))
