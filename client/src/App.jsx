@@ -24,7 +24,10 @@ function App() {
   return (
     <>
       {/* <h2 className='text-3xl font-bold underline' >Home page</h2> */}
+      <header>
       <NavBar/>
+      </header>
+      <section className='bg-slate-400 min-h-screen py-16 px-10' >
       <Routes>
         <Route path='/' element={<Home/>} />
         <Route path='/about' element={<About/>} />
@@ -36,6 +39,10 @@ function App() {
         <FaArrowUp />
       </button>
       }
+      </section>
+      <footer>
+        Footer
+      </footer>
     </>
   )
 }
