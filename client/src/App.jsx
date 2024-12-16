@@ -2,6 +2,8 @@ import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
 import Product from './pages/Product.jsx'
+import Login from './pages/Login.jsx'
+import Signup from './pages/Signup.jsx'
 import { BrowserRouter as Router , Route , Routes} from "react-router-dom";
 import NavBar from './components/NavBar.jsx';
 import { useEffect, useState } from 'react';
@@ -30,6 +32,8 @@ function App() {
       <section className='bg-slate-400 min-h-screen py-16 px-10' >
       <Routes>
         <Route path='/' element={<Home/>} />
+        <Route path='/login' element={<Login/>} />
+        <Route path='/signup' element={<Signup/>} />
         <Route path='/about' element={<About/>} />
         <Route path='/contact' element={<Contact/>} />
         <Route path='/products' element={<Product/>} />

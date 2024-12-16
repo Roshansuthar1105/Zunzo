@@ -36,8 +36,7 @@ const UserSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
-    default: "",
-    require: true,
+    default: "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?ga=GA1.1.2134957458.1729403260&semt=ais_hybrid",
   },
   createdAt: {
     type: Date,

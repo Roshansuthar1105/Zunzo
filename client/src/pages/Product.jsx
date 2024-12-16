@@ -6,7 +6,7 @@ import ProductCard from "../components/products/ProductCard.jsx"
 function Product() {
   return (
     <>
-    <div className="bg-blue-100 min-h-screen">
+    <div className="bg-black min-h-screen">
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold text-blue-500 mb-4">All Products</h1>
         <div className="mb-8">
@@ -27,7 +27,7 @@ function Product() {
   );
 }
 
-// export default Product;
+export default Product;
 // import React from 'react';
 
 // const AllProducts = () => {
