@@ -29,7 +29,7 @@ function App() {
       <header>
       <NavBar/>
       </header>
-      <section className='bg-slate-400 min-h-screen py-16 px-10' >
+      <section className='bg-slate-900 text-white min-h-screen py-24 px-10' >
       <Routes>
         <Route path='/' element={<Home/>} />
         <Route path='/login' element={<Login/>} />
@@ -44,7 +44,7 @@ function App() {
       </button>
       }
       </section>
-      <footer>
+      <footer className='bg-slate-950 text-white' >
         Footer
       </footer>
     </>

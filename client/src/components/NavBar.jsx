@@ -20,7 +20,7 @@ function NavBar() {
         }
     const [profileVisible,setProfileVisible]=useState(false);
     return (
-        <div className="h-20 bg-slate-900 flex justify-between items-center px-20 fixed top-0 left-0 w-full ">
+        <div className="h-20 bg-slate-950 flex justify-between items-center px-20 fixed top-0 left-0 w-full ">
             <Link to="/" className="text-3xl text-indigo-600 font-bold">Zunzo</Link>
             <nav className="flex justify-center">
                 <ul className="flex flex-row gap-10">
@@ -41,6 +41,7 @@ function NavBar() {
                     <p className='hover:text-indigo-300 border-b border-slate-600 hover:border-indigo-500 ' >{profileInfo.name}</p>
                     <p className='hover:text-indigo-300 border-b border-slate-600 hover:border-indigo-500 ' >{profileInfo.email}</p>
                     <p className='hover:text-indigo-300 border-b border-slate-600 hover:border-indigo-500 ' >{profileInfo.phone}</p>
+                    <button className='bg-red-600 text-white p-1 rounded-md hover:bg-red-700 ' >Log Out</button>
                 </div> }
             </div>
         </div>
