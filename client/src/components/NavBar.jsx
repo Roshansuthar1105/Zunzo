@@ -20,14 +20,14 @@ function NavBar() {
         }
     const [profileVisible,setProfileVisible]=useState(false);
     return (
-        <div className="h-20 bg-slate-950 flex justify-between items-center px-20 fixed top-0 left-0 w-full ">
+        <div className="h-20 bg-slate-950 flex justify-between items-center px-20 fixed top-0 left-0 w-full border-b-2 border-slate-400">
             <Link to="/" className="text-3xl text-indigo-600 font-bold">Zunzo</Link>
-            <nav className="flex justify-center">
+            <nav className="flex justify-center ">
                 <ul className="flex flex-row gap-10">
                     {
                         links.map(link => {
                             return (
-                                <li className="text-lg font-semibold text-white hover:text-indigo-400 transition duration-300">
+                                <li key={link.title} className="text-lg font-semibold text-white hover:text-indigo-400 transition duration-300">
                                     <Link to={link.path}>{link.title}</Link>
                                 </li>
                             )
