@@ -62,6 +62,32 @@ export const submitContact = async (contactData) => {
   return response.data;
 };
 
+// Order API
+export const createOrder = async (orderData) => {
+  const response = await api.post('/orders', orderData);
+  return response.data;
+};
+
+export const getUserOrders = async () => {
+  const response = await api.get('/orders/my-orders');
+  return response.data;
+};
+
+export const getOrderById = async (orderId) => {
+  const response = await api.get(`/orders/${orderId}`);
+  return response.data;
+};
+
+export const getAllOrders = async () => {
+  const response = await api.get('/orders/all');
+  return response.data;
+};
+
+export const updateOrderStatus = async (orderId, status) => {
+  const response = await api.patch(`/orders/${orderId}`, { status });
+  return response.data;
+};
+
 // Admin API
 export const getUsers = async () => {
   const response = await api.get('/admin/users');

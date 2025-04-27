@@ -2,13 +2,14 @@ import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
+import { createOrder } from '../api';
 import toast from 'react-hot-toast';
 
 const CheckoutPage = () => {
   const { cart, totalPrice, clearCart } = useContext(CartContext);
   const { isAuthenticated, user } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -25,23 +26,23 @@ const CheckoutPage = () => {
     cardExpiry: '',
     cardCvv: '',
   });
-  
+
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   useEffect(() => {
     // Redirect if not authenticated
     if (!isAuthenticated) {
       navigate('/login?redirect=checkout');
       return;
     }
-    
+
     // Redirect if cart is empty
     if (cart.length === 0) {
       navigate('/cart');
       return;
     }
-    
+
     // Pre-fill email if user is logged in
     if (user && user.email) {
       setFormData(prev => ({
@@ -50,14 +51,14 @@ const CheckoutPage = () => {
       }));
     }
   }, [isAuthenticated, cart, navigate, user]);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-    
+
     // Clear error when field is edited
     if (errors[name]) {
       setErrors(prev => ({
@@ -66,10 +67,10 @@ const CheckoutPage = () => {
       }));
     }
   };
-  
+
   const validateForm = () => {
     const newErrors = {};
-    
+
     // Shipping info validation
     if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
     if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
@@ -80,50 +81,123 @@ const CheckoutPage = () => {
     if (!formData.city.trim()) newErrors.city = 'City is required';
     if (!formData.state.trim()) newErrors.state = 'State is required';
     if (!formData.zipCode.trim()) newErrors.zipCode = 'ZIP code is required';
-    
+
     // Payment info validation
     if (formData.paymentMethod === 'credit') {
       if (!formData.cardName.trim()) newErrors.cardName = 'Name on card is required';
       if (!formData.cardNumber.trim()) newErrors.cardNumber = 'Card number is required';
-      else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, ''))) 
+      else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, '')))
         newErrors.cardNumber = 'Card number must be 16 digits';
       if (!formData.cardExpiry.trim()) newErrors.cardExpiry = 'Expiry date is required';
-      else if (!/^\d{2}\/\d{2}$/.test(formData.cardExpiry)) 
+      else if (!/^\d{2}\/\d{2}$/.test(formData.cardExpiry))
         newErrors.cardExpiry = 'Expiry date must be in MM/YY format';
       if (!formData.cardCvv.trim()) newErrors.cardCvv = 'CVV is required';
-      else if (!/^\d{3,4}$/.test(formData.cardCvv)) 
+      else if (!/^\d{3,4}$/.test(formData.cardCvv))
         newErrors.cardCvv = 'CVV must be 3 or 4 digits';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       setIsSubmitting(true);
-      
-      // Simulate order processing
-      setTimeout(() => {
-        // In a real app, you would send the order to your backend here
+
+      try {
+        // Prepare order items
+        const orderItems = cart.map(item => ({
+          productId: item._id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.images && item.images.length > 0 ? item.images[0] : null,
+          discount: item.discount || 0
+        }));
+
+        // Calculate totals
+        const subtotal = totalPrice;
+        const tax = totalPrice * 0.1;
+        const shipping = 0; // Free shipping
+        const total = subtotal + tax + shipping;
+
+        // Prepare shipping address
+        const shippingAddress = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.zipCode,
+          country: formData.country,
+          phone: formData.phone
+        };
+
+        // Prepare payment details (don't store actual card numbers in production)
+        const paymentDetails = formData.paymentMethod === 'credit'
+          ? {
+              cardName: formData.cardName,
+              // Only store last 4 digits for reference
+              cardNumber: `xxxx-xxxx-xxxx-${formData.cardNumber.slice(-4)}`,
+              cardExpiry: formData.cardExpiry
+            }
+          : { method: 'paypal' };
+
+        // Create order object
+        const orderData = {
+          items: orderItems,
+          shippingAddress,
+          paymentMethod: formData.paymentMethod,
+          paymentDetails,
+          subtotal,
+          tax,
+          shipping,
+          total
+        };
+
+        // Send order to API
+        const response = await createOrder(orderData);
+
+        // Clear cart and redirect to confirmation page
         toast.success('Order placed successfully!');
         clearCart();
-        navigate('/order-confirmation');
+
+        // Navigate to order confirmation with order number
+        navigate('/order-confirmation', {
+          state: {
+            orderNumber: response.orderNumber,
+            orderId: response.orderId
+          }
+        });
+      } catch (error) {
+        console.error('Error placing order:', error);
+
+        // Check for specific error messages from the API
+        if (error.response && error.response.data && error.response.data.message) {
+          if (error.response.data.message.includes('Not enough stock')) {
+            toast.error(error.response.data.message);
+          } else {
+            toast.error('Failed to place order: ' + error.response.data.message);
+          }
+        } else {
+          toast.error('Failed to place order. Please try again.');
+        }
+      } finally {
         setIsSubmitting(false);
-      }, 1500);
+      }
     }
   };
-  
+
   const tax = totalPrice * 0.1;
   const shipping = 0; // Free shipping
   const orderTotal = totalPrice + tax + shipping;
-  
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Checkout</h1>
-      
+
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Checkout Form */}
         <div className="lg:w-2/3">
@@ -131,7 +205,7 @@ const CheckoutPage = () => {
             {/* Shipping Information */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">Shipping Information</h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label htmlFor="firstName" className="block text-gray-700 font-medium mb-1">First Name</label>
@@ -158,7 +232,7 @@ const CheckoutPage = () => {
                   {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label htmlFor="email" className="block text-gray-700 font-medium mb-1">Email</label>
@@ -185,7 +259,7 @@ const CheckoutPage = () => {
                   {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                 </div>
               </div>
-              
+
               <div className="mb-4">
                 <label htmlFor="address" className="block text-gray-700 font-medium mb-1">Address</label>
                 <input
@@ -198,7 +272,7 @@ const CheckoutPage = () => {
                 />
                 {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
                   <label htmlFor="city" className="block text-gray-700 font-medium mb-1">City</label>
@@ -237,7 +311,7 @@ const CheckoutPage = () => {
                   {errors.zipCode && <p className="text-red-500 text-sm mt-1">{errors.zipCode}</p>}
                 </div>
               </div>
-              
+
               <div>
                 <label htmlFor="country" className="block text-gray-700 font-medium mb-1">Country</label>
                 <select
@@ -259,11 +333,11 @@ const CheckoutPage = () => {
                 </select>
               </div>
             </div>
-            
+
             {/* Payment Information */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">Payment Method</h2>
-              
+
               <div className="mb-4">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center">
@@ -292,7 +366,7 @@ const CheckoutPage = () => {
                   </div>
                 </div>
               </div>
-              
+
               {formData.paymentMethod === 'credit' && (
                 <div>
                   <div className="mb-4">
@@ -307,7 +381,7 @@ const CheckoutPage = () => {
                     />
                     {errors.cardName && <p className="text-red-500 text-sm mt-1">{errors.cardName}</p>}
                   </div>
-                  
+
                   <div className="mb-4">
                     <label htmlFor="cardNumber" className="block text-gray-700 font-medium mb-1">Card Number</label>
                     <input
@@ -321,7 +395,7 @@ const CheckoutPage = () => {
                     />
                     {errors.cardNumber && <p className="text-red-500 text-sm mt-1">{errors.cardNumber}</p>}
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="cardExpiry" className="block text-gray-700 font-medium mb-1">Expiry Date</label>
@@ -352,14 +426,14 @@ const CheckoutPage = () => {
                   </div>
                 </div>
               )}
-              
+
               {formData.paymentMethod === 'paypal' && (
                 <div className="bg-gray-50 p-4 rounded-md">
                   <p className="text-gray-700">You will be redirected to PayPal to complete your payment.</p>
                 </div>
               )}
             </div>
-            
+
             <button
               type="submit"
               disabled={isSubmitting}
@@ -369,21 +443,21 @@ const CheckoutPage = () => {
             </button>
           </form>
         </div>
-        
+
         {/* Order Summary */}
         <div className="lg:w-1/3">
           <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Order Summary</h2>
-            
+
             <div className="max-h-80 overflow-y-auto mb-4">
               {cart.map((item) => {
                 const discountedPrice = item.price * (1 - item.discount / 100);
                 return (
                   <div key={item._id} className="flex items-center py-3 border-b border-gray-200">
                     <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
-                      <img 
-                        src={item.images[0]} 
-                        alt={item.name} 
+                      <img
+                        src={item.images[0]}
+                        alt={item.name}
                         className="h-full w-full object-cover object-center"
                       />
                     </div>
@@ -398,7 +472,7 @@ const CheckoutPage = () => {
                 );
               })}
             </div>
-            
+
             <div className="border-t border-gray-200 pt-4 mb-4">
               <div className="flex justify-between mb-2">
                 <span className="text-gray-600">Subtotal</span>
@@ -413,7 +487,7 @@ const CheckoutPage = () => {
                 <span className="text-gray-800 font-medium">${tax.toFixed(2)}</span>
               </div>
             </div>
-            
+
             <div className="border-t border-gray-200 pt-4 mb-6">
               <div className="flex justify-between">
                 <span className="text-lg font-semibold text-gray-800">Total</span>

@@ -9,7 +9,7 @@ const Navbar = () => {
   const { totalItems } = useContext(CartContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(true);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSearch = (e) => {
@@ -53,15 +53,15 @@ const Navbar = () => {
               <input
                 type="text"
                 placeholder="Search products..."
-                className="px-4 py-1 rounded-l-md text-gray-800 focus:outline-none"
+                className="px-4 py-1 rounded-l-md text-gray-800 focus:outline-none bg-gray-50  "
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <button
                 type="submit"
-                className="bg-blue-700 px-4 py-1 rounded-r-md hover:bg-blue-800 transition"
+                className="bg-gray-200 px-4 py-2 rounded-r-md hover:bg-gray-100 transition"
               >
-                <FaSearch />
+                <FaSearch className='text-black'  />
               </button>
             </form>
           </div>
@@ -86,8 +86,7 @@ const Navbar = () => {
                   {
                     isProfileOpen && (
                       <>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 block" onClick={() => {setIsProfileOpen(!isProfileOpen);}} >
-
+                <div className="absolute right-0 mt-2 min-w-48 bg-white rounded-md shadow-lg py-1 z-10 block" onClick={() => {setIsProfileOpen(!isProfileOpen);}} >
                         <div className="px-4 py-2 text-sm text-gray-500 border-b border-gray-200">
                           Signed in as <span className="font-semibold text-gray-700">{user?.email}</span>
                         </div>

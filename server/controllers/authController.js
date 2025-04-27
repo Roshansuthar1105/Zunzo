@@ -12,6 +12,7 @@ const home = async (req, res) => {
 const register = async (req, res) => {
   try {
     const newuser = req.body;
+    newuser.email = newuser.email.toLowerCase();
     const userExist = await User.findOne({ email: newuser.email });
     if (userExist) {
       return res.status(400).json({ msg: "user already exists" });
@@ -36,6 +37,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    email = email.toLowerCase();
     const userExist = await User.findOne({ email:email});
     if (!userExist) {
      return res.status(401).json({ message: "User Not Found !" });

@@ -7,6 +7,7 @@ const authRouter = require("./routes/authRoute.js");
 const contactRouter = require("./routes/contactRouter.js");
 const adminRoute = require("./routes/adminRoute.js");
 const productRoute = require("./routes/productRoute.js");
+const orderRoute = require("./routes/orderRoute.js");
 
 const app = express();
 // use cors to give access
@@ -30,6 +31,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/contact", contactRouter);
 app.use("/api/admin", adminRoute);
 app.use("/api/products", productRoute);
+app.use("/api/orders", orderRoute);
 // use error middleware at the bottom most position
 app.use(errorMiddleware);
 

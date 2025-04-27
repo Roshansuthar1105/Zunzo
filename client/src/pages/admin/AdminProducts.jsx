@@ -276,9 +276,26 @@ const AdminProducts = () => {
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
+                  list="category-options"
                   required
                   className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <datalist id="category-options">
+                  <option value="Electronics" />
+                  <option value="Clothing" />
+                  <option value="Home & Kitchen" />
+                  <option value="Books" />
+                  <option value="Toys & Games" />
+                  <option value="Beauty & Personal Care" />
+                  <option value="Sports & Outdoors" />
+                  <option value="Health & Wellness" />
+                  <option value="Jewelry" />
+                  <option value="Automotive" />
+                  <option value="Pet Supplies" />
+                  <option value="Office Supplies" />
+                  <option value="Furniture" />
+                  <option value="Food & Grocery" />
+                </datalist>
               </div>
               <div>
                 <label htmlFor="brand" className="block text-gray-700 font-medium mb-1">
@@ -290,8 +307,27 @@ const AdminProducts = () => {
                   name="brand"
                   value={formData.brand}
                   onChange={handleChange}
+                  list="brand-options"
                   className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <datalist id="brand-options">
+                  <option value="Apple" />
+                  <option value="Samsung" />
+                  <option value="Sony" />
+                  <option value="Nike" />
+                  <option value="Adidas" />
+                  <option value="Puma" />
+                  <option value="Dell" />
+                  <option value="HP" />
+                  <option value="Lenovo" />
+                  <option value="LG" />
+                  <option value="Philips" />
+                  <option value="Bosch" />
+                  <option value="Nestle" />
+                  <option value="Coca-Cola" />
+                  <option value="Pepsi" />
+                  <option value="Amazon Basics" />
+                </datalist>
               </div>
               <div>
                 <label htmlFor="stock" className="block text-gray-700 font-medium mb-1">
@@ -450,8 +486,8 @@ const AdminProducts = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
-                      ${product.price.toFixed(2)}
-                      {product.discount > 0 && (
+                      ${(product.price !== undefined && !isNaN(product.price)) ? Number(product.price).toFixed(2) : '0.00'}
+                      {product.discount !== undefined && product.discount > 0 && (
                         <span className="ml-2 text-xs text-red-600">
                           {product.discount}% OFF
                         </span>
@@ -465,7 +501,7 @@ const AdminProducts = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
-                      {product.stock > 0 ? (
+                      {product.stock !== undefined && product.stock > 0 ? (
                         <span className="text-green-600">{product.stock} in stock</span>
                       ) : (
                         <span className="text-red-600">Out of stock</span>

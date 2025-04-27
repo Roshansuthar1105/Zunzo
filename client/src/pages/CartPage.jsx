@@ -116,7 +116,8 @@ const CartPage = () => {
                               min="1"
                               value={item.quantity}
                               onChange={(e) => handleQuantityChange(item._id, parseInt(e.target.value))}
-                              className="w-12 text-center border-t border-b border-gray-300 py-1"
+                              className="w-8 border-t border-b box-border border-gray-300 py-1 h-8 text-center 
+                              appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             />
                             <button
                               onClick={() => handleQuantityChange(item._id, item.quantity + 1)}

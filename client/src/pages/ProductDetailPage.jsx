@@ -332,7 +332,7 @@ const ProductDetailPage = () => {
                 max={product.stock}
                 value={quantity}
                 onChange={handleQuantityChange}
-                className="w-16 text-center border-t border-b border-gray-300 py-1"
+                className="w-16 h-8 text-center border-t border-b box-border border-gray-300 py-1 appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
               <button
                 onClick={incrementQuantity}
