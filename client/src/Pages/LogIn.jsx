@@ -10,8 +10,9 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import i18n from "../components/common/components/LangConfig.jsx";
-const url =import.meta.env.VITE_BACKEND_URL;
+import { useAuth } from "../store/Store.jsx";
 const LogIn = () => {
+  const {API,storeTokenInLS}=useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -22,8 +23,16 @@ const LogIn = () => {
     e.preventDefault();
     try {
       // Attempt to sign in with email and password
-      await signInWithEmailAndPassword(auth, email, password);
+      const user=await fetch(`${API}/api/auth/login`,{
+        method:"POST",
+        body:JSON.stringify({email,password}),
+        headers:{
+          "Content-Type":"application/json"
+        }
+      }).then((res)=>res.json()).catch((err)=>console.log(err))
       // Update message state on successful login
+      console.log(user,"user");
+      storeTokenInLS(user.token);
       setMessage("Login successful!");
       setError("");
       setOpen(true);
@@ -40,17 +49,17 @@ const LogIn = () => {
     }
   };
 
-  const handleForgotPassword = async () => {
-    try {
-      // Send password reset email
-      await sendPasswordResetEmail(auth, email);
-      setMessage("Password reset email sent. Check your inbox.");
-      setOpen(true);
-    } catch (error) {
-      setError(error.message);
-      setOpen(true);
-    }
-  };
+  // const handleForgotPassword = async () => {
+  //   try {
+  //     // Send password reset email
+  //     await sendPasswordResetEmail(auth, email);
+  //     setMessage("Password reset email sent. Check your inbox.");
+  //     setOpen(true);
+  //   } catch (error) {
+  //     setError(error.message);
+  //     setOpen(true);
+  //   }
+  // };
 
   return (
     <div className="relative flex max-lg:flex-col-reverse justify-center md:justify-start xl:justify-center items-center gap-12 lg:mt-28 xl:gap-24">
@@ -101,13 +110,13 @@ const LogIn = () => {
             >
               {i18n.t("loginPage.login")}
             </Button>
-            <button
+            {/* <button
               type="button"
               onClick={handleForgotPassword}
               className="text-base text-red-500 hover:underline font-medium "
             >
               {i18n.t("loginPage.forgot")}
-            </button>
+            </button> */}
           </div>
         </form>
         <p className="text-gray-600 mx-auto">

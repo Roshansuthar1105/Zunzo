@@ -11,10 +11,11 @@ const productRoute = require("./routes/productRoute.js");
 const app = express();
 // use cors to give access
 const frontendUrl = process.env.FRONTEND_URI || "http://localhost:5173";
+console.log(frontendUrl)
 const corsOptions = {
   origin: frontendUrl,
   methods: "GET, POST, DELETE, PUT, PATCH, HEAD",
-  credentials: true,
+  credentials: false,
 };
 app.use(cors(corsOptions));
 // it is a middleware that parse the data into json type

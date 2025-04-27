@@ -29,7 +29,7 @@ try {
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider1 = ({ children }) => {
   const [currentUser, setCurrentUser] = useState("");
   const [loading, setLoading] = useState(true);
 

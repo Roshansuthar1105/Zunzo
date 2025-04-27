@@ -4,7 +4,9 @@ const authController = require("../controllers/authController.js")
 const zodSchemas = require("../validators/authValidator.js");
 const validator = require("../middlewares/authMiddleware.js");
 authRouter.route("/").get(authController.home)
-authRouter.route("/register").post(validator(zodSchemas.signUpSchema),authController.register)
-authRouter.route("/login").post(validator(zodSchemas.loginSchema),authController.login)
+authRouter.route("/register").post(authController.register)
+authRouter.route("/login").post(authController.login)
+// authRouter.route("/register").post(validator(zodSchemas.signUpSchema),authController.register)
+// authRouter.route("/login").post(validator(zodSchemas.loginSchema),authController.login)
 
 module.exports = authRouter;
