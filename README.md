@@ -5,6 +5,9 @@
 
 Zunzo is a full-stack e-commerce platform built with the MERN stack (MongoDB, Express.js, React, Node.js). It provides a seamless shopping experience with features for customers, sellers, and administrators.
 
+## 🚀 Live Demo
+
+Check out the live demo: [Zunzo - Everything You Need, One Click Away](http://zunzo.netlify.app)
 ## Features
 
 ### Customer Features
